@@ -23,8 +23,11 @@ install: .make/install
 	@[ "$(NPM)" = "yarn" ] && yarn || $(NPM) install
 
 .PHONY: prepare
-prepare:
+prepare: deps/sigar/.git
 	@mkdir -p .make && touch -m .make/install
+deps/sigar/.git:
+	@git submodule update --init --recursive
+	@cd deps/sigar && git pull origin master
 
 .PHONY: install-continue
 install-continue:
@@ -67,8 +70,8 @@ build/config.gypi: binding.gyp src/*.cpp
 	@node-pre-gyp clean configure
 build/Release/sigar.node: build/config.gypi
 	@node-pre-gyp build package
+	@cd deps && $(MAKE) -s -f Makefile.sigar clean
 .make/build: .make/test package.json lib build/Release/sigar.node $(shell git ls-files 2>/dev/null || true)
-	@echo hi
 	-@rm -rf lib || true
 	@babel src -d lib --extensions '.ts,.tsx' --source-maps inline
 	@mkdir -p .make && touch -m .make/build
@@ -79,6 +82,7 @@ clean:
 	-@node-pre-gyp clean
 	-@rm -rf node_modules/.cache || true
 	-@rm -rf node_modules/.tmp || true
+	@cd deps && $(MAKE) -s -f Makefile.sigar clean
 	@git clean -fXd -e \!node_modules -e \!node_modules/**/* -e \!yarn.lock
 
 .PHONY: purge
