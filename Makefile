@@ -31,7 +31,7 @@ deps/sigar/.git:
 
 .PHONY: install-continue
 install-continue:
-	# -@node-pre-gyp install --fallback-to-build
+	-@node-pre-gyp install --fallback-to-build
 
 .PHONY: format
 format:

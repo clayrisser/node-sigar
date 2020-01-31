@@ -1,6 +1,6 @@
 {
   "name": "node-sigar",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "node bindings to sigar",
   "keywords": [
     "node-sigar",
@@ -25,7 +25,8 @@
     "url": "https://codejam.ninja"
   },
   "files": [
-    "lib"
+    "lib",
+    "Makefile"
   ],
   "main": "lib/index.js",
   "repository": {
