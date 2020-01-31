@@ -63,7 +63,7 @@ test:
 
 .PHONY: build
 build: .make/build
-build/config.gypi: binding.gyp clib
+build/config.gypi: binding.gyp src/*.cpp
 	@node-pre-gyp clean configure
 build/Release/sigar.node: build/config.gypi
 	@node-pre-gyp build package
@@ -76,9 +76,10 @@ build/Release/sigar.node: build/config.gypi
 .PHONY: clean
 clean:
 	-@jest --clearCache
-	@git clean -fXd -e \!node_modules -e \!node_modules/**/* -e \!yarn.lock
+	-@node-pre-gyp clean
 	-@rm -rf node_modules/.cache || true
 	-@rm -rf node_modules/.tmp || true
+	@git clean -fXd -e \!node_modules -e \!node_modules/**/* -e \!yarn.lock
 
 .PHONY: purge
 purge: clean
@@ -88,59 +89,11 @@ purge: clean
 start: node_modules/.tmp/eslintReport.json
 	@babel-node --extensions '.ts,.tsx' example
 
-
-
-
-
-
-
-
-
-
-# .PHONY: build
-# build: lib build/Release/gtop.node
-# build/config.gypi:
-# 	@node-pre-gyp clean configure
-# build/Release/gtop.node: build/config.gypi
-# 	@cd deps && $(MAKE) -s -f Makefile.glib build
-# 	@cd deps && $(MAKE) -s -f Makefile.libgtop build
-# 	@node-pre-gyp build package
-# lib: node_modules/.tmp/eslintReport.json
-# 	@rm -rf lib
-# 	@babel src -d lib --extensions ".ts,.tsx" --source-maps inline
-
-
-# .PHONY: clean
-# clean:
-# 	-@jest --clearCache
-# 	-@node-pre-gyp clean
-# 	-@rm -rf node_modules/.cache || true
-# 	-@rm -rf node_modules/.tmp || true
-# 	@cd deps && $(MAKE) -s -f Makefile.glib clean
-# 	@cd deps && $(MAKE) -s -f Makefile.libgtop clean
-# 	@git clean -fXd -e \!node_modules -e \!node_modules/**/* -e \!yarn.lock
-
-# .PHONY: purge
-# purge: clean
-# 	@git clean -fXd
-
-# .PHONY: prepublish
-# prepublish: deps/libgtop/.git deps/glib/.git
-# 	@$(MAKE) -s _modified MODIFIED=install
-# 	@$(MAKE) -s build
-# deps/libgtop/.git:
-# 	$(MAKE) -s _submodules
-# deps/glib/.git:
-# 	$(MAKE) -s _submodules
-# .PHONY: _submodules
-# _submodules:
-# 	@git submodule update --init --recursive
-
-# .PHONY: prepublish-only
-# prepublish-only:
-# 	@rm -rf build
-# 	@$(MAKE) -s build
-# 	@node-pre-gyp-github publish --release
+.PHONY: prepublish-only
+prepublish-only:
+	-@rm -rf build || true
+	@$(MAKE) -s build
+	@node-pre-gyp-github publish --release
 
 %:
 	@

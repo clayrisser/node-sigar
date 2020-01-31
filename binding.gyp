@@ -3,7 +3,7 @@
     {
       'target_name': 'sigar',
       'sources': [
-        'clib/main.cpp'
+        'src/sigar.cpp'
       ]
     }
   ]
