@@ -85,7 +85,7 @@
   },
   "gypfile": true,
   "binary": {
-    "host": "https://github.com/codejamninja/libgtop/releases/download/",
+    "host": "https://github.com/codejamninja/node-sigar/releases/download/",
     "module_name": "sigar",
     "module_path": "build/Release",
     "package_name": "{module_name}-v{version}-{platform}-{arch}.tar.gz",
