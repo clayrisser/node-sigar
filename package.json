@@ -1,0 +1,94 @@
+{
+  "name": "node-sigar",
+  "version": "0.0.1",
+  "description": "node bindings to sigar",
+  "keywords": [
+    "node-sigar",
+    "sigar",
+    "node",
+    "cpu",
+    "proc",
+    "process",
+    "pid",
+    "ppid",
+    "ps"
+  ],
+  "homepage": "https://github.com/codejamninja/node-sigar",
+  "bugs": {
+    "url": "https://github.com/codejamninja/node-sigar/issues",
+    "email": "jam@codejam.ninja"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Jam Risser",
+    "email": "jam@codejam.ninja",
+    "url": "https://codejam.ninja"
+  },
+  "files": [
+    "lib"
+  ],
+  "main": "lib/index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/codejamninja/node-sigar"
+  },
+  "scripts": {
+    "build": "make -s build",
+    "clean": "make -s clean",
+    "format": "make -s format",
+    "install": "make -s install-continue",
+    "lint": "make -s lint",
+    "node-gyp": "node-gyp",
+    "node-pre-gyp": "node-pre-gyp",
+    "node-pre-gyp-github": "node-pre-gyp-github",
+    "prepublishOnly": "make -s prepublish-only",
+    "prepare": "make -s prepare",
+    "purge": "make -s purge",
+    "spellcheck": "make -s spellcheck",
+    "start": "make -s start",
+    "test": "make -s test"
+  },
+  "dependencies": {
+    "core-js": "^3.6.4",
+    "node-pre-gyp": "^0.14.0"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.8.4",
+    "@babel/core": "^7.8.4",
+    "@babel/node": "^7.8.4",
+    "@babel/preset-env": "^7.8.4",
+    "@babel/preset-typescript": "^7.8.3",
+    "@types/jest": "^25.1.1",
+    "@types/node": "^13.5.3",
+    "@typescript-eslint/eslint-plugin": "^2.18.0",
+    "@typescript-eslint/parser": "^2.18.0",
+    "cspell": "^4.0.46",
+    "eslint": "^6.8.0",
+    "eslint-config-airbnb-typescript": "^6.3.1",
+    "eslint-config-jam": "^0.2.20",
+    "gnumake": "^0.1.0",
+    "jest": "^25.1.0",
+    "node-gyp": "^6.1.0",
+    "node-pre-gyp-github": "^1.4.3",
+    "prettier": "^1.19.1",
+    "typescript": "^3.7.5"
+  },
+  "engines": {
+    "node": ">=6.0.0"
+  },
+  "eslintIgnore": [
+    "lib"
+  ],
+  "jest": {
+    "testRegex": "tests(/|/.*/)[^_/]*[jt]sx?$",
+    "verbose": true
+  },
+  "gypfile": true,
+  "binary": {
+    "host": "https://github.com/codejamninja/libgtop/releases/download/",
+    "module_name": "sigar",
+    "module_path": "build/Release",
+    "package_name": "{module_name}-v{version}-{platform}-{arch}.tar.gz",
+    "remote_path": "{version}"
+  }
+}
