@@ -1,6 +1,6 @@
 {
   "name": "node-sigar",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "node bindings to sigar",
   "keywords": [
     "node-sigar",

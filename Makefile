@@ -74,6 +74,7 @@ build/Release/sigar.node: build/config.gypi
 .make/build: .make/test package.json lib build/Release/sigar.node $(shell git ls-files 2>/dev/null || true)
 	-@rm -rf lib || true
 	@babel src -d lib --extensions '.ts,.tsx' --source-maps inline
+	@tsc -d --emitDeclarationOnly
 	@mkdir -p .make && touch -m .make/build
 
 .PHONY: clean
