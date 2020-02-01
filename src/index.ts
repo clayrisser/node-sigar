@@ -25,18 +25,11 @@ export interface ProcStat {
 
 export default class Sigar {
   get procList(): number[] {
-    return addon.getProcList().map((pid: BigInt) => Number(pid));
+    return addon.getProcList();
   }
 
   getProcState(pid: number): ProcState {
-    return Object.entries(addon.getProcState(BigInt(pid))).reduce(
-      (procState: { [key: string]: any }, [key, value]: [string, any]) => {
-        if (typeof value === 'bigint') value = Number(value);
-        procState[key] = value;
-        return procState;
-      },
-      {}
-    ) as ProcState;
+    return addon.getProcState(pid);
   }
 
   get procStat(): ProcStat {

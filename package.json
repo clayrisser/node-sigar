@@ -71,6 +71,7 @@
     "eslint-config-airbnb-typescript": "^6.3.1",
     "eslint-config-jam": "^0.2.20",
     "jest": "^25.1.0",
+    "node-addon-api": "^2.0.0",
     "node-gyp": "^6.1.0",
     "node-pre-gyp-github": "^1.4.3",
     "prettier": "^1.19.1",

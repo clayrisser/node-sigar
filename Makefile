@@ -66,7 +66,7 @@ test:
 
 .PHONY: build
 build: .make/build
-build/config.gypi: binding.gyp src/*.cpp
+build/config.gypi: binding.gyp src/lib/*.cpp
 	@node-pre-gyp clean configure
 build/Release/sigar.node: build/config.gypi
 	@node-pre-gyp build package
