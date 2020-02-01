@@ -28,11 +28,15 @@ export default class Sigar {
     return addon.getProcList();
   }
 
-  getProcState(pid: number): ProcState {
-    return addon.getProcState(pid);
-  }
-
   get procStat(): ProcStat {
     return addon.getProcStat();
+  }
+
+  getProcArgs(pid: number): string[] {
+    return addon.getProcArgs(pid);
+  }
+
+  getProcState(pid: number): ProcState {
+    return addon.getProcState(pid);
   }
 }

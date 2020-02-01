@@ -1,14 +1,15 @@
 import Sigar, { ProcState } from '../src';
 
-interface PidsProcState {
-  [key: number]: ProcState;
-}
-
 const sigar = new Sigar();
 
+interface PidsProcInfo {
+  [key: number]: [string[], ProcState];
+}
+
 console.log(
-  sigar.procList.reduce((pidsProcState: PidsProcState, pid: number) => {
-    pidsProcState[pid] = sigar.getProcState(pid);
-    return pidsProcState;
+  sigar.procList.reduce((pidsProcInfo: PidsProcInfo, pid: number) => {
+    pidsProcInfo[pid] = [sigar.getProcArgs(pid), sigar.getProcState(pid)];
+    return pidsProcInfo;
   }, {})
 );
+console.log(sigar.procStat);
