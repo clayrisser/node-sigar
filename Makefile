@@ -1,16 +1,25 @@
 PLATFORM := $(shell node -e "process.stdout.write(process.platform)")
 ifeq ($(PLATFORM), win32)
-	SHELL = cmd
+	SHELL = cmd.exe
+	NULL := nul
+	GREP := shx grep
+	RM := shx rm
+	MV := shx mv
+	MKDIR := shx mkdir
+	TRUE := shx true
+else
+	NULL := /dev/null
+	GREP := shx grep
+	RM := rm
+	MV := mv
+	MKDIR := mkdir
+	TRUE := true
 endif
 
-NPM := npm
-ifeq ($(shell pnpm --version >/dev/null 2>&1 && echo true || echo false), true)
-	NPM = pnpm
-else
-ifeq ($(shell yarn --version >/dev/null 2>&1 && echo true || echo false), true)
-	NPM = yarn
-endif
-endif
+GIT := $(shell git --version >$(NULL) 2>&1 && echo git|| echo $(TRUE))
+GREP := $(shell where grep)
+NPM := $(shell pnpm --version >$(NULL) 2>&1 && echo pnpm|| (yarn --version >$(NULL) 2>&1 && echo yarn|| echo npm))
+
 
 .EXPORT_ALL_VARIABLES:
 
@@ -18,83 +27,104 @@ endif
 all: build
 
 .PHONY: install
-install: .make/install
-.make/install: package.json node_modules
-	@[ "$(NPM)" = "yarn" ] && yarn || $(NPM) install
-
-.PHONY: prepare
-prepare: deps/sigar/.git
-	@mkdir -p .make && touch -m .make/install
-deps/sigar/.git:
-	@git submodule update --init --recursive
-	@cd deps/sigar && git pull origin master
+install: node_modules
+node_modules: package.json
+	@$(NPM) install
 
 .PHONY: format
 format:
-	-@eslint --fix --ext .ts,.tsx . >/dev/null || true
+	-@eslint --fix --ext .ts,.tsx . >$(NULL) || $(TRUE)
 	@prettier --write ./**/*.{json,md,scss,yaml,yml,js,jsx,ts,tsx} --ignore-path .gitignore
-	@mkdir -p .make && touch -m .make/format
-.make/format: .make/install $(shell git ls-files 2>/dev/null || true)
+	@$(MKDIR) -p node_modules/.make && touch -m node_modules/.make/format
+node_modules/.make/format: $(shell $(GIT) ls-files | $(GREP) "\.(j|t)sx?$$")
 	@$(MAKE) -s format
 
 .PHONY: spellcheck
-spellcheck:
-	-@cspell --config .cspellrc src/**/*.ts prisma/schema.prisma.tmpl
-	@mkdir -p .make && touch -m .make/spellcheck
-.make/spellcheck: .make/format $(shell git ls-files 2>/dev/null || true)
-	@$(MAKE) -s spellcheck
+spellcheck: node_modules/.make/format
+	-@cspell --config .cspellrc src/**/*.ts
+	@$(MKDIR) -p node_modules/.make && touch -m node_modules/.make/spellcheck
+node_modules/.make/spellcheck: $(shell $(GIT) ls-files | $(GREP) "\.(j|t)sx?$$")
+	-@$(MAKE) -s spellcheck
 
 .PHONY: lint
-lint:
-	-@tsc --allowJs --noEmit
-	-@eslint --ext .ts,.tsx .
-	-@eslint -f json -o node_modules/.tmp/eslintReport.json --ext .ts,.tsx ./
-	@mkdir -p .make && touch -m .make/lint
-.make/lint: .make/spellcheck $(shell git ls-files 2>/dev/null || true)
-	@$(MAKE) -s lint
+lint: node_modules/.make/spellcheck
+	# -@tsc --allowJs --noEmit
+	# -@eslint --ext .ts,.tsx .
+	# @eslint -f json -o node_modules/.tmp/eslintReport.json --ext .ts,.tsx ./
+node_modules/.tmp/eslintReport.json: $(shell $(GIT) ls-files | $(GREP) "\.(j|t)sx?$$")
+	-@$(MAKE) -s lint
 
 .PHONY: test
-test:
-	@jest --coverage
-	@mkdir -p .make && touch -m .make/test
-.make/test: .make/lint $(shell git ls-files 2>/dev/null || true)
-	@$(MAKE) -s test
+test: node_modules/.tmp/eslintReport.json
+	# @jest --json --outputFile=node_modules/.tmp/jestTestResults.json --coverage --coverageDirectory=node_modules/.tmp/coverage --testResultsProcessor=jest-sonar-reporter --collectCoverageFrom='["src/**/*.{js,jsx,ts,tsx}","!src/**/*.story.{js,jsx,ts,tsx}"]' $(ARGS)
+node_modules/.tmp/coverage/lcov.info: $(shell $(GIT) ls-files | $(GREP) "\.(j|t)sx?$$")
+	-@$(MAKE) -s test
+
+.PHONY: coverage
+coverage: node_modules/.tmp/eslintReport.json
+	# @jest --coverage --coverageDirectory=node_modules/.tmp/coverage --collectCoverageFrom='["src/**/*.{js,jsx,ts,tsx}","!src/**/*.story.{js,jsx,ts,tsx}"]' $(ARGS)
+
+.PHONY: test-watch
+test-watch: src/generated/apollo.tsx node_modules
+	@jest --watch --collectCoverageFrom='["src/**/*.{js,jsx,ts,tsx}","!src/**/*.story.{js,jsx,ts,tsx}"]' $(ARGS)
+
+.PHONY: test-ui
+test-ui: src/generated/apollo.tsx node_modules
+	@majestic $(ARGS)
 
 .PHONY: build
-build: .make/build
-build/config.gypi: binding.gyp src/lib/*.cpp
-	@node-pre-gyp clean configure
-build/Release/sigar.node: build/config.gypi
-	@node-pre-gyp build package
-	@cd deps && $(MAKE) -s -f Makefile.sigar clean
-.make/build: .make/test package.json lib build/Release/sigar.node $(shell git ls-files 2>/dev/null || true)
-	-@rm -rf lib || true
+build: lib build/Release/sigar.node
+	@echo building
+lib: node_modules/.tmp/coverage/lcov.info $(shell $(GIT) ls-files)
+	@echo lib
+	-@$(RM) -rf lib node_modules/.tmp/lib 2>$(NULL) || $(TRUE)
 	@babel src -d lib --extensions '.ts,.tsx' --source-maps inline
 	@tsc -d --emitDeclarationOnly
-	@mkdir -p .make && touch -m .make/build
+	@$(RM) -rf lib/tests
+	@$(MKDIR) -p node_modules/.tmp/lib
+	@$(MV) lib/src node_modules/.tmp/lib/src
+	@$(CP) -r node_modules/.tmp/lib/src/* lib 2>$(NULL) || $(TRUE)
+	@$(CP) -r node_modules/.tmp/lib/src/.* lib 2>$(NULL) || $(TRUE)
+build/config.gypi: binding.gyp src/lib/*.cpp
+	@echo buuu
+	@node-pre-gyp clean configure
+build/Release/sigar.node: build/config.gypi
+	@echo hiii
+	@node-pre-gyp build package
+	@cd deps && $(MAKE) -s -f Makefile.sigar clean
 
 .PHONY: clean
 clean:
 	-@jest --clearCache
 	-@node-pre-gyp clean
-	-@rm -rf node_modules/.cache || true
-	-@rm -rf node_modules/.tmp || true
+	-@$(RM) -rf node_modules/.cache || true
+	-@$(RM) -rf node_modules/.make || true
+	-@$(RM) -rf node_modules/.tmp || true
 	@cd deps && $(MAKE) -s -f Makefile.sigar clean
-	@git clean -fXd -e \!node_modules -e \!node_modules/**/* -e \!yarn.lock
-
-.PHONY: purge
-purge: clean
-	@git clean -fXd
+	@git clean -fXd \
+		-e \!/node_modules \
+		-e \!/node_modules/**/* \
+		-e \!/package-lock.json \
+		-e \!/pnpm-lock.yaml \
+		-e \!/yarn.lock
 
 .PHONY: start
 start: node_modules/.tmp/eslintReport.json
-	@babel-node --extensions '.ts,.tsx' example
+	@babel-node --extensions '.ts,.tsx' example $(ARGS)
 
 .PHONY: prepublish-only
 prepublish-only:
 	-@rm -rf build || true
 	@$(MAKE) -s build
 	@node-pre-gyp-github publish --release
+
+.PHONY: purge
+purge: clean
+	@git clean -fXd
+
+.PHONY: report
+report: spellcheck lint test
+	@
 
 %:
 	@
