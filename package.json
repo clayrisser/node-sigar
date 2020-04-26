@@ -37,12 +37,13 @@
     "build": "make -s build",
     "clean": "make -s clean",
     "format": "make -s format",
-    "install": "node-pre-gyp install --fallback-to-build",
+    "install": "node-pre-gyp install --fallback-to-build || true",
     "lint": "make -s lint",
     "node-gyp": "node-gyp",
     "node-pre-gyp": "node-pre-gyp",
     "node-pre-gyp-github": "node-pre-gyp-github",
     "prepare": "make -s prepare",
+    "make": "make",
     "prepublishOnly": "make -s prepublish-only",
     "purge": "make -s purge",
     "spellcheck": "make -s spellcheck",
@@ -75,6 +76,7 @@
     "node-gyp": "^6.1.0",
     "node-pre-gyp-github": "^1.4.3",
     "prettier": "^2.0.5",
+    "shx": "^0.3.2",
     "typescript": "^3.8.3"
   },
   "engines": {
