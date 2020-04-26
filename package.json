@@ -36,6 +36,7 @@
   "scripts": {
     "build": "make -s build",
     "clean": "make -s clean",
+    "compile": "make -s compile",
     "format": "make -s format",
     "install": "node-pre-gyp install --fallback-to-build || true",
     "lint": "make -s lint",
@@ -72,6 +73,7 @@
     "eslint-config-airbnb-typescript": "^7.2.1",
     "eslint-config-jam": "^0.2.20",
     "jest": "^25.4.0",
+    "jest-sonar-reporter": "^2.0.0",
     "node-addon-api": "^2.0.0",
     "node-gyp": "^6.1.0",
     "node-pre-gyp-github": "^1.4.3",

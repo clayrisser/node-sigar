@@ -29,7 +29,10 @@
           'xcode_settings': {
             'GCC_SYMBOLS_PRIVATE_EXTERN': 'YES'
           }
-        }]
+        }],
+        ['OS=="win"', {
+
+        }],
       ]
     }
   ]
