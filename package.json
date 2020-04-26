@@ -1,6 +1,6 @@
 {
   "name": "node-sigar",
-  "version": "0.0.7",
+  "version": "0.0.9",
   "description": "node bindings to sigar",
   "keywords": [
     "node-sigar",
@@ -37,13 +37,13 @@
     "build": "make -s build",
     "clean": "make -s clean",
     "format": "make -s format",
-    "install": "make -s install-continue",
+    "install": "node-pre-gyp install --fallback-to-build",
     "lint": "make -s lint",
     "node-gyp": "node-gyp",
     "node-pre-gyp": "node-pre-gyp",
     "node-pre-gyp-github": "node-pre-gyp-github",
-    "prepublishOnly": "make -s prepublish-only",
     "prepare": "make -s prepare",
+    "prepublishOnly": "make -s prepublish-only",
     "purge": "make -s purge",
     "spellcheck": "make -s spellcheck",
     "start": "make -s start",
@@ -51,31 +51,31 @@
   },
   "dependencies": {
     "bindings": "^1.5.0",
-    "core-js": "^3.6.4",
+    "core-js": "^3.6.5",
     "gnumake": "^0.1.0",
     "node-pre-gyp": "^0.14.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.8.4",
-    "@babel/core": "^7.8.4",
-    "@babel/node": "^7.8.4",
-    "@babel/preset-env": "^7.8.4",
-    "@babel/preset-typescript": "^7.8.3",
+    "@babel/core": "^7.9.0",
+    "@babel/node": "^7.8.7",
+    "@babel/preset-env": "^7.9.5",
+    "@babel/preset-typescript": "^7.9.0",
     "@types/bindings": "^1.3.0",
-    "@types/jest": "^25.1.1",
-    "@types/node": "^13.5.3",
-    "@typescript-eslint/eslint-plugin": "^2.18.0",
-    "@typescript-eslint/parser": "^2.18.0",
-    "cspell": "^4.0.46",
+    "@types/jest": "^25.2.1",
+    "@types/node": "^13.13.2",
+    "@typescript-eslint/eslint-plugin": "^2.29.0",
+    "@typescript-eslint/parser": "^2.29.0",
+    "cspell": "^4.0.57",
     "eslint": "^6.8.0",
-    "eslint-config-airbnb-typescript": "^6.3.1",
+    "eslint-config-airbnb-typescript": "^7.2.1",
     "eslint-config-jam": "^0.2.20",
-    "jest": "^25.1.0",
+    "jest": "^25.4.0",
     "node-addon-api": "^2.0.0",
     "node-gyp": "^6.1.0",
     "node-pre-gyp-github": "^1.4.3",
-    "prettier": "^1.19.1",
-    "typescript": "^3.7.5"
+    "prettier": "^2.0.5",
+    "typescript": "^3.8.3"
   },
   "engines": {
     "node": ">=6.0.0"
@@ -91,8 +91,12 @@
   "binary": {
     "host": "https://github.com/codejamninja/node-sigar/releases/download/",
     "module_name": "sigar",
-    "module_path": "build/Release",
-    "package_name": "{module_name}-v{version}-{platform}-{arch}.tar.gz",
-    "remote_path": "{version}"
+    "module_path": "build-tmp-napi-v{napi_build_version}/Release",
+    "package_name": "{module_name}-v{version}-{platform}-{arch}-napi{napi_build_version}.tar.gz",
+    "remote_path": "{version}",
+    "napi_versions": [
+      1,
+      3
+    ]
   }
 }

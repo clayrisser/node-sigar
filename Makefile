@@ -29,10 +29,6 @@ deps/sigar/.git:
 	@git submodule update --init --recursive
 	@cd deps/sigar && git pull origin master
 
-.PHONY: install-continue
-install-continue:
-	-@node-pre-gyp install --fallback-to-build
-
 .PHONY: format
 format:
 	-@eslint --fix --ext .ts,.tsx . >/dev/null || true
