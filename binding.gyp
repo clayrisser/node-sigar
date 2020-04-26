@@ -5,13 +5,17 @@
       'include_dirs': [
         '<!@(node -p "require(\'node-addon-api\').include")',
         'deps/sigar/include',
-        'deps/sigar/src/os/linux',
         'src/include'
       ],
       'sources': [
-        '<!@(ls -1 deps/sigar/src/*.c)',
-        '<!@(ls -1 deps/sigar/src/os/linux/*.c)',
-        '<!@(ls -1 src/lib/*.cpp)'
+        'deps/sigar/src/sigar_cache.c',
+        'deps/sigar/src/sigar_fileinfo.c',
+        'deps/sigar/src/sigar_format.c',
+        'deps/sigar/src/sigar_getline.c',
+        'deps/sigar/src/sigar_ptql.c',
+        'deps/sigar/src/sigar_signal.c',
+        'deps/sigar/src/sigar_util.c',
+        'deps/sigar/src/sigar.c'
       ],
       'cflags!': [ '-fno-exceptions' ],
       'cflags_cc!': [ '-fno-exceptions' ],
@@ -28,11 +32,42 @@
           'cflags+': ['-fvisibility=hidden'],
           'xcode_settings': {
             'GCC_SYMBOLS_PRIVATE_EXTERN': 'YES'
-          }
+          },
+          'include_dirs': [
+            'deps/sigar/src/os/darwin'
+          ],
+          'sources': [
+            '<!@(ls -1 deps/sigar/src/os/darwin/*.c)'
+          ]
         }],
         ['OS=="win"', {
-
+          'include_dirs': [
+            'deps/sigar/src/os/win32'
+          ],
+          'sources': [
+            'deps/sigar/src/os/win32/win32_sigar.c',
+            'deps/sigar/src/os/win32/peb.c',
+            'deps/sigar/src/os/win32/wmi.cpp'
+          ],
+          'libraries': [
+            '-lws2_32',
+            '-lkernel32',
+            '-luser32',
+            '-ladvapi32',
+            '-lnetapi32',
+            '-lshell32',
+            '-lpdh',
+            '-lversion'
+          ]
         }],
+        ['OS=="linux"', {
+          'include_dirs': [
+            'deps/sigar/src/os/linux'
+          ],
+          'sources': [
+            '<!@(ls -1 deps/sigar/src/os/linux/*.c)'
+          ]
+        }]
       ]
     }
   ]

@@ -125,4 +125,4 @@ report: spellcheck lint test
 	@
 
 %:
-	@
+	@ls deps/sigar/src/os/win32/*.c
