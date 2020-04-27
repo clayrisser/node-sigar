@@ -60,19 +60,18 @@ patch:
 	@$(SED) -i "s/#define snprintf _snprintf/\/\/ #define  snprintf _snprintf/" deps/sigar/src/os/win32/sigar_os.h 1>$(NULL)
 
 .PHONY: compile
-compile: build-tmp-napi-v1/Release/sigar.node
-build/config.gypi: deps/sigar/.git binding.gyp src/lib/*.cpp
+compile: build/Release/sigar.node
+build-tmp-napi-v1/config.gypi: deps/sigar/.git binding.gyp src/lib/*.cpp
 	@$(MAKE) -s patch
 	@node-pre-gyp clean configure
-	@$(CP) -r build-tmp-napi-v1/* build
-build/Release/sigar.node: build/config.gypi
+build/Release/sigar.node: build-tmp-napi-v1/config.gypi
 	@$(MAKE) -s patch
 	@node-pre-gyp build package
 	@$(CD) deps && $(MAKE) -s -f Makefile.sigar clean
 	@$(CP) -r build-tmp-napi-v1/* build
 
 .PHONY: build
-build: lib build-tmp-napi-v1/Release/sigar.node
+build: lib build/Release/sigar.node
 lib: node_modules/.tmp/coverage/lcov.info $(shell $(GIT) ls-files)
 	-@$(RM) -rf lib node_modules/.tmp/lib 2>$(NULL) || true
 	@babel src -d lib --extensions ".ts,.tsx" --source-maps inline
@@ -104,7 +103,7 @@ endif
 	@$(MAKE) -s prepare
 
 .PHONY: start
-start: node_modules build-tmp-napi-v1/Release/sigar.node
+start: node_modules build/Release/sigar.node
 	@babel-node --extensions ".ts,.tsx" example $(ARGS)
 
 .PHONY: prepublish-only
