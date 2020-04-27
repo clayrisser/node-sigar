@@ -1,5 +1,6 @@
 PLATFORM := $(shell node -e "process.stdout.write(process.platform)")
 ifeq ($(PLATFORM), win32)
+	MAKE = make
 	MKDIRP := mkdir
 	NULL := nul
 	SHELL = cmd.exe
@@ -68,24 +69,33 @@ test-watch: src/generated/apollo.tsx node_modules
 test-ui: src/generated/apollo.tsx node_modules
 	@majestic $(ARGS)
 
+.PHONY: patch
+patch:
+	@sed -i "s/#define snprintf _snprintf/\/\/ #define  snprintf _snprintf/" deps/sigar/src/os/win32/sigar_os.h 1>$(NULL)
+
+.PHONY: compile
+compile: build/Release/sigar.node
+build/config.gypi: deps/sigar/.git binding.gyp src/lib/*.cpp
+	@$(MAKE) -s patch
+	@node-pre-gyp clean configure
+build/Release/sigar.node: build/config.gypi
+	@$(MAKE) -s patch
+	@node-pre-gyp build package
+	@cd deps && $(MAKE) -s -f Makefile.sigar clean
+	@rm -r build
+	@ln -s build-tmp-napi-v3 build
+
 .PHONY: build
 build: lib build/Release/sigar.node
 lib: node_modules/.tmp/coverage/lcov.info $(shell $(GIT) ls-files)
 	-rm -rf lib node_modules/.tmp/lib 2>$(NULL) || true
-	babel src -d lib --extensions '.ts,.tsx' --source-maps inline
+	babel src -d lib --extensions ".ts,.tsx" --source-maps inline
 	tsc -d --emitDeclarationOnly
 	rm -rf lib/tests
 	-@$(MKDIRP) "node_modules/.tmp/lib"
 	mv lib/src node_modules/.tmp/lib/src
 	cp -r node_modules/.tmp/lib/src/* lib 2>$(NULL) || true
 	cp -r node_modules/.tmp/lib/src/.* lib 2>$(NULL) || true
-.PHONY: compile
-compile: build/Release/sigar.node
-build/config.gypi: binding.gyp src/lib/*.cpp
-	node-pre-gyp clean configure
-build/Release/sigar.node: build/config.gypi
-	node-pre-gyp build package
-	cd deps && $(MAKE) -s -f Makefile.sigar clean
 
 .PHONY: clean
 clean:
@@ -96,19 +106,20 @@ clean:
 	-@rm -rf node_modules/.tmp || true
 	-@cd deps && $(MAKE) -s -f Makefile.sigar clean
 ifeq ($(PLATFORM), win32)
-	@git clean -fXd -e !/node_modules -e !/node_modules/**/* -e !/package-lock.json -e !/pnpm-lock.yaml -e !/yarn.lock
+	@$(GIT) clean -fXd -e !/node_modules -e !/node_modules/**/* -e !/package-lock.json -e !/pnpm-lock.yaml -e !/yarn.lock
 else
-	@git clean -fXd \
-	  -e \!/node_modules
+	@$(GIT) clean -fXd \
+	  -e \!/node_modules \
 		-e \!/node_modules/**/* \
 		-e \!/package-lock.json \
 		-e \!/pnpm-lock.yaml \
 		-e \!/yarn.lock
 endif
+	@$(MAKE) -s prepare
 
 .PHONY: start
-start: node_modules/.tmp/eslintReport.json
-	@babel-node --extensions '.ts,.tsx' example $(ARGS)
+start: node_modules build/Release/sigar.node
+	@babel-node --extensions ".ts,.tsx" example $(ARGS)
 
 .PHONY: prepublish-only
 prepublish-only:
@@ -122,6 +133,11 @@ purge: clean
 
 .PHONY: report
 report: spellcheck lint test
+	@
+
+%:
+	@
+port: spellcheck lint test
 	@
 
 %:

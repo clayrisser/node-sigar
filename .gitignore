@@ -81,3 +81,4 @@ tsconfig.tsbuildinfo
 /.make
 /build
 /*-napi*
+/test-report.xml

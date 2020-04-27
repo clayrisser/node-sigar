@@ -1,3 +1,16 @@
+PLATFORM := $(shell node -e "process.stdout.write(process.platform)")
+ifeq ($(PLATFORM), win32)
+	MAKE = make
+	NULL := nul
+	SHELL = cmd.exe
+else
+	NULL := /dev/null
+endif
+
+GIT := $(shell git --version >$(NULL) 2>&1 && echo git|| echo true)
+
+.EXPORT_ALL_VARIABLES:
+
 .PHONY: clean
 clean:
-	@cd sigar && git add . && git reset --hard
+	@cd sigar && $(GIT) add . && $(GIT) reset --hard 2>$(NULL)
