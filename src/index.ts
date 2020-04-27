@@ -3,14 +3,14 @@ import bindings from 'bindings';
 const addon = bindings('sigar');
 
 export interface ProcState {
-  name: string;
-  nice: number;
-  ppid: number;
-  priority: number;
-  processor: number;
-  state: string;
-  threads: number;
-  tty: number;
+  name?: string;
+  nice?: number;
+  ppid?: number;
+  priority?: number;
+  processor?: number;
+  state?: string;
+  threads?: number;
+  tty?: number;
 }
 
 export interface ProcStat {

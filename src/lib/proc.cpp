@@ -22,15 +22,11 @@ Napi::Value GetProcArgs(const Napi::CallbackInfo& info) {
   double arg0 = info[0].As<Napi::Number>().DoubleValue();
   sigar_open(&sigar);
   status = sigar_proc_args_get(sigar, arg0, &sigar_proc_args);
-  if (status != SIGAR_OK) {
-    Napi::TypeError::New(env,
-                         "Failed to get proc args for pid '" + std::to_string((int)arg0) + "'"
-                         ).ThrowAsJavaScriptException();
-    return env.Null();
-  }
   proc_args = Napi::Array::New(env, sigar_proc_args.number);
-  for (int i = 0; i < sigar_proc_args.number; i++) {
-    proc_args.Set(i, Napi::String::New(env, sigar_proc_args.data[i]));
+  if (status == SIGAR_OK) {
+    for (int i = 0; i < sigar_proc_args.number; i++) {
+      proc_args.Set(i, Napi::String::New(env, sigar_proc_args.data[i]));
+    }
   }
   sigar_proc_args_destroy(sigar, &sigar_proc_args);
   sigar_close(sigar);
@@ -104,22 +100,18 @@ Napi::Value GetProcState(const Napi::CallbackInfo& info) {
   double arg0 = info[0].As<Napi::Number>().DoubleValue();
   sigar_open(&sigar);
   status = sigar_proc_state_get(sigar, arg0, &sigar_proc_state);
-  if (status != SIGAR_OK) {
-    Napi::TypeError::New(env,
-                         "Failed to get proc state for pid '" + std::to_string((int)arg0) + "'"
-                         ).ThrowAsJavaScriptException();
-    return env.Null();
-  }
   proc_state = Napi::Object::New(env);
-  proc_state.Set("name", Napi::String::New(env, sigar_proc_state.name));
-  proc_state.Set("nice", Napi::Number::New(env, sigar_proc_state.nice));
-  proc_state.Set("ppid", Napi::Number::New(env, sigar_proc_state.ppid));
-  proc_state.Set("priority", Napi::Number::New(env, sigar_proc_state.priority));
-  proc_state.Set("processor", Napi::Number::New(env, sigar_proc_state.processor));
-  char state[2] = {sigar_proc_state.state};
-  proc_state.Set("state", Napi::String::New(env, state));
-  proc_state.Set("threads", Napi::Number::New(env, sigar_proc_state.threads));
-  proc_state.Set("tty", Napi::Number::New(env, sigar_proc_state.tty));
+  if (status == SIGAR_OK) {
+    proc_state.Set("name", Napi::String::New(env, sigar_proc_state.name));
+    proc_state.Set("nice", Napi::Number::New(env, sigar_proc_state.nice));
+    proc_state.Set("ppid", Napi::Number::New(env, sigar_proc_state.ppid));
+    proc_state.Set("priority", Napi::Number::New(env, sigar_proc_state.priority));
+    proc_state.Set("processor", Napi::Number::New(env, sigar_proc_state.processor));
+    char state[2] = {sigar_proc_state.state};
+    proc_state.Set("state", Napi::String::New(env, state));
+    proc_state.Set("threads", Napi::Number::New(env, sigar_proc_state.threads));
+    proc_state.Set("tty", Napi::Number::New(env, sigar_proc_state.tty));
+  }
   sigar_close(sigar);
   return proc_state;
 }

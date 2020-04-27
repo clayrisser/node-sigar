@@ -17,7 +17,7 @@
         'deps/sigar/src/sigar_signal.c',
         'deps/sigar/src/sigar_util.c',
         'src/lib/proc.cpp',
-        'src/lib/sigar.cpp'
+        'src/lib/nodeSigar.cpp'
       ],
       'cflags!': [ '-fno-exceptions' ],
       'cflags_cc!': [ '-fno-exceptions' ],
@@ -60,7 +60,8 @@
             '-lshell32',
             '-lpdh',
             '-lversion'
-          ]
+          ],
+          'cflags_cc+': [ '-DWIN32' ]
         }],
         ['OS=="linux"', {
           'include_dirs': [
