@@ -1,6 +1,6 @@
 {
   "name": "node-sigar",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "description": "node bindings to sigar",
   "keywords": [
     "node-sigar",
@@ -44,8 +44,8 @@
     "node-pre-gyp": "node-pre-gyp",
     "node-pre-gyp-github": "node-pre-gyp-github",
     "prepare": "make -s prepare",
-    "make": "make",
     "prepublishOnly": "make -s prepublish-only",
+    "publish-binaries": "make -s publish-binaries",
     "purge": "make -s purge",
     "spellcheck": "make -s spellcheck",
     "start": "make -s start",
@@ -54,7 +54,7 @@
   "dependencies": {
     "bindings": "^1.5.0",
     "core-js": "^3.6.5",
-    "gnumake": "^0.2.4",
+    "gnumake": "^0.3.0",
     "node-pre-gyp": "^0.14.0"
   },
   "devDependencies": {
