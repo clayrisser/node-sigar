@@ -16,8 +16,8 @@
         'deps/sigar/src/sigar_ptql.c',
         'deps/sigar/src/sigar_signal.c',
         'deps/sigar/src/sigar_util.c',
-        'src/lib/proc.cpp',
-        'src/lib/nodeSigar.cpp'
+        'src/lib/nodeSigar.cpp',
+        'src/lib/proc.cpp'
       ],
       'cflags!': [ '-fno-exceptions' ],
       'cflags_cc!': [ '-fno-exceptions' ],
