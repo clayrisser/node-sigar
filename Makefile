@@ -16,7 +16,7 @@ deps/sigar/.git:
 
 .PHONY: format
 format:
-	-@eslint --fix --ext .ts,.tsx . >$(NULL) || true
+	-@eslint --fix --ext .ts,.tsx . >$(NULL) || $(TRUE)
 	@prettier --write ./**/*.{json,md,scss,yaml,yml,js,jsx,ts,tsx} --ignore-path .gitignore
 	-@$(MKDIRP) "node_modules/.make" && $(TOUCH) -m node_modules/.make/format
 node_modules/.make/format: $(shell $(GIT) ls-files | $(GREP) "\.(j|t)sx?$$")
@@ -73,22 +73,22 @@ build/Release/sigar.node: build-tmp-napi-v1/config.gypi
 .PHONY: build
 build: lib build/Release/sigar.node
 lib: node_modules/.tmp/coverage/lcov.info $(shell $(GIT) ls-files)
-	-@$(RM) -rf lib node_modules/.tmp/lib 2>$(NULL) || true
+	-@$(RM) -rf lib node_modules/.tmp/lib 2>$(NULL) || $(TRUE)
 	@babel src -d lib --extensions ".ts,.tsx" --source-maps inline
 	@tsc -d --emitDeclarationOnly
 	@$(RM) -rf lib/tests
 	@$(MKDIRP) "node_modules/.tmp/lib"
 	@$(MV) lib/src node_modules/.tmp/lib/src
-	@$(CP) -r node_modules/.tmp/lib/src/* lib 2>$(NULL) || true
-	@$(CP) -r node_modules/.tmp/lib/src/.* lib 2>$(NULL) || true
+	@$(CP) -r node_modules/.tmp/lib/src/* lib 2>$(NULL) || $(TRUE)
+	@$(CP) -r node_modules/.tmp/lib/src/.* lib 2>$(NULL) || $(TRUE)
 
 .PHONY: clean
 clean:
 	-@jest --clearCache
 	-@node-pre-gyp clean
-	-@$(RM) -rf node_modules/.cache || true
-	-@$(RM) -rf node_modules/.make || true
-	-@$(RM) -rf node_modules/.tmp || true
+	-@$(RM) -rf node_modules/.cache || $(TRUE)
+	-@$(RM) -rf node_modules/.make || $(TRUE)
+	-@$(RM) -rf node_modules/.tmp || $(TRUE)
 	-@$(CD) deps && $(MAKE) -s -f Makefile.sigar clean
 ifeq ($(PLATFORM), win32)
 	@$(GIT) clean -fXd -e !/node_modules -e !/node_modules/**/* -e !/package-lock.json -e !/pnpm-lock.yaml -e !/yarn.lock
@@ -110,7 +110,7 @@ start: node_modules build/Release/sigar.node
 prepublish-only: publish-binaries
 .PHONY: publish-binaries
 publish-binaries:
-	-@$(RM) -rf build || true
+	-@$(RM) -rf build || $(TRUE)
 	@$(MAKE) -s build
 	@node-pre-gyp-github publish --release
 
