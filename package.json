@@ -1,6 +1,6 @@
 {
   "name": "node-sigar",
-  "version": "0.0.13",
+  "version": "0.0.14",
   "description": "node bindings to sigar",
   "keywords": [
     "node-sigar",
@@ -38,7 +38,7 @@
     "clean": "make -s clean",
     "compile": "make -s compile",
     "format": "make -s format",
-    "install": "node-pre-gyp install --fallback-to-build || true && node lib/install",
+    "install": "(node-pre-gyp install --fallback-to-build && node lib/install) || true",
     "lint": "make -s lint",
     "node-gyp": "node-gyp",
     "node-pre-gyp": "node-pre-gyp",
