@@ -8,6 +8,7 @@
         'src/include'
       ],
       'sources': [
+        'deps/sigar/src/sigar.c',
         'deps/sigar/src/sigar_cache.c',
         'deps/sigar/src/sigar_fileinfo.c',
         'deps/sigar/src/sigar_format.c',
@@ -15,7 +16,8 @@
         'deps/sigar/src/sigar_ptql.c',
         'deps/sigar/src/sigar_signal.c',
         'deps/sigar/src/sigar_util.c',
-        'deps/sigar/src/sigar.c'
+        'src/lib/proc.cpp',
+        'src/lib/sigar.cpp'
       ],
       'cflags!': [ '-fno-exceptions' ],
       'cflags_cc!': [ '-fno-exceptions' ],

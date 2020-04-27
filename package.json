@@ -1,6 +1,6 @@
 {
   "name": "node-sigar",
-  "version": "0.0.10",
+  "version": "0.0.12",
   "description": "node bindings to sigar",
   "keywords": [
     "node-sigar",
@@ -38,7 +38,7 @@
     "clean": "make -s clean",
     "compile": "make -s compile",
     "format": "make -s format",
-    "install": "node-pre-gyp install --fallback-to-build || true",
+    "install": "node-pre-gyp install --fallback-to-build || true && node lib/install",
     "lint": "make -s lint",
     "node-gyp": "node-gyp",
     "node-pre-gyp": "node-pre-gyp",
@@ -54,7 +54,6 @@
   "dependencies": {
     "bindings": "^1.5.0",
     "core-js": "^3.6.5",
-    "gnumake": "^0.3.0",
     "node-pre-gyp": "^0.14.0"
   },
   "devDependencies": {
@@ -72,6 +71,7 @@
     "eslint": "^6.8.0",
     "eslint-config-airbnb-typescript": "^7.2.1",
     "eslint-config-jam": "^0.2.20",
+    "gnumake": "^0.3.0",
     "jest": "^25.4.0",
     "jest-sonar-reporter": "^2.0.0",
     "node-addon-api": "^2.0.0",

@@ -61,13 +61,15 @@ patch:
 
 .PHONY: compile
 compile: build-tmp-napi-v1/Release/sigar.node
-build-tmp-napi-v1/config.gypi: deps/sigar/.git binding.gyp src/lib/*.cpp
+build/config.gypi: deps/sigar/.git binding.gyp src/lib/*.cpp
 	@$(MAKE) -s patch
 	@node-pre-gyp clean configure
-build-tmp-napi-v1/Release/sigar.node: build-tmp-napi-v1/config.gypi
+	@$(CP) -r build-tmp-napi-v1/* build
+build/Release/sigar.node: build/config.gypi
 	@$(MAKE) -s patch
 	@node-pre-gyp build package
 	@$(CD) deps && $(MAKE) -s -f Makefile.sigar clean
+	@$(CP) -r build-tmp-napi-v1/* build
 
 .PHONY: build
 build: lib build-tmp-napi-v1/Release/sigar.node
