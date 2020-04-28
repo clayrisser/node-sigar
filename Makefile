@@ -58,7 +58,7 @@ test-ui: src/generated/apollo.tsx node_modules
 .PHONY: patch
 patch:
 	@$(SED) -i "s/#define snprintf _snprintf/\/\/ #define  snprintf _snprintf/" deps/sigar/src/os/win32/sigar_os.h 1>$(NULL)
-	@$(SED) -i "s/SIGAR_INLINE char *sigar_skip_token(char *p)/char *sigar_skip_token(char *p)/" deps/sigar/src/sigar_util.c 1>$(NULL)
+	@$(SED) -i "s/SIGAR_INLINE char \*sigar_skip_token(char \*p)/char \*sigar_skip_token(char \*p)/" deps/sigar/src/sigar_util.c 1>$(NULL)
 
 .PHONY: compile
 compile: build/Release/sigar.node
