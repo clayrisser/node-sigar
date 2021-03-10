@@ -1,5 +1,9 @@
 include node_modules/gnumake/gnumake.mk
 
+ifeq ($(PLATFORM), darwin)
+	SED := gsed
+endif
+
 .PHONY: all
 all: build
 
