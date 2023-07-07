@@ -5,6 +5,7 @@
 > node bindings to sigar
 
 Please ★ this repo if you found it useful ★ ★ ★
+![](assets/node-sigar.png)
 
 ## Features
 
